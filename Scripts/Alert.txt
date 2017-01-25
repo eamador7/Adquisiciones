@@ -1,0 +1,56 @@
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="strMensaje">Cualquier texto</param>
+    ''' <param name="posicion">1. top 2. topLeft 3.topCenter 4. topRight
+    ''' 5. center 6. centerLeft 7. centerRight 8. bottom 9. bottomLeft 10. bottomCenter 11.bottomRight
+    ''' </param>
+    ''' <param name="tipo">1. alert 2. success 3. warning 4.error 5.information</param>
+    Private Sub Alert(ByVal strMensaje As String, Optional ByVal posicion As Integer = 1, Optional ByVal tipo As Integer = 1)
+        Dim messageType As String = ""
+        Dim messagePosition As String = ""
+        Select Case posicion
+            Case 1
+                messagePosition = "top"
+            Case 2
+                messagePosition = "topLeft"
+            Case 3
+                messagePosition = "topCenter"
+            Case 4
+                messagePosition = "topRight"
+            Case 5
+                messagePosition = "center"
+            Case 6
+                messagePosition = "centerLeft"
+            Case 7
+                messagePosition = "centerRight"
+            Case 8
+                messagePosition = "bottom"
+            Case 9
+                messagePosition = "bottomLeft"
+            Case 10
+                messagePosition = "bottomCenter"
+            Case 11
+                messagePosition = "bottomRight"
+            Case Else
+                messagePosition = "top"
+
+        End Select
+
+        Select Case tipo
+            Case 1
+                messageType = "alert"
+            Case 2
+                messageType = "success"
+            Case 3
+                messageType = "warning"
+            Case 4
+                messageType = "error"
+            Case 5
+                messageType = "information"
+            Case Else
+                messageType = "alert"
+        End Select
+        ScriptManager.RegisterStartupScript(Me, Me.GetType(), "script234", "noty({text: '" & strMensaje & "', layout: '" & messagePosition & "', closeWith: ['click', 'hover'], type: '" & messageType & "'});", True)
+    End Sub
