@@ -210,14 +210,14 @@ Public Class clsFunciones
         End Try
     End Function
 
-    Public Function EnviarCorreo(ByVal Mensaje As String, ByVal EMail As String) As String
+    Public Function EnviarCorreo(ByVal Mensaje As String, ByVal EMail As String, Optional ByVal subject As String = "JMAS") As String
         Try
             'MsgBox(EMail + vbNewLine + ArchivoXML)
             Dim _Message As New System.Net.Mail.MailMessage()
             Dim _SMTP As New System.Net.Mail.SmtpClient
             'CONFIGURACIÓN DEL STMP
 
-            _SMTP.Credentials = New System.Net.NetworkCredential("extranet@jmaschihuahua.gob.mx", "Jmaschihuahua-15")
+            _SMTP.Credentials = New System.Net.NetworkCredential("extranet@jmaschihuahua.gob.mx", "Cuidaelagu@96")
             '_SMTP.Host = "mail.jmaschihuahua.gob.mx"
             _SMTP.Host = "74.220.207.110"
             _SMTP.Port = 25
@@ -231,7 +231,7 @@ Public Class clsFunciones
             'Cuenta de Correo al que se le quiere enviar el e-mail 
             _Message.From = New System.Net.Mail.MailAddress("extranet@jmaschihuahua.gob.mx", "Extranet", System.Text.Encoding.UTF8)
             'Quien lo envía 
-            _Message.Subject = "Salida de Almacen JMAS Chihuahua"
+            _Message.Subject = subject
             'Sujeto del e-mail 
             _Message.SubjectEncoding = System.Text.Encoding.UTF8
             'Codificacion 
@@ -322,4 +322,6 @@ Public Class clsFunciones
         End Select
         ScriptManager.RegisterStartupScript(mySender, mySender.GetType(), "script234", "noty({text: '" & strMensaje & "', layout: '" & messagePosition & "', closeWith: ['click', 'hover'], type: '" & messageType & "'});", True)
     End Sub
+
+
 End Class

@@ -1,4 +1,5 @@
 ﻿Imports System.Data
+Imports clsFunciones
 Partial Class wfrmSolicitarCotizacion
     Inherits System.Web.UI.Page
 
@@ -41,13 +42,13 @@ Partial Class wfrmSolicitarCotizacion
             If txtNumProveedor.Text.Replace(" ", "") <> "" Or txtNombreBuscar.Text.Replace(" ", "") <> "" Then ' si se capturo el numero o nombre de proveedor
 
                 If txtNombreBuscar.Text.Replace(" ", "") <> "" And txtNombreBuscar.Text.Length < 3 Then ' si se capturonombre y  menos de tres letras del proveedor
-                    Alert("Favor de capturar almenos tres letras del proveedor ")
+                    Alert("Favor de capturar almenos tres letras del proveedor ", Me, 1, 3)
                 End If
 
                 Dim strMensaje As String
                 Dim dtsProveedores As New DataSet
                 Dim clsFuncion As New clsFunciones
-                strMensaje = clsFuncion.Llena_Dataset("Filtros", dtsProveedores, "Proveedores", "Cargar_Proveedores", txtNumProveedor.Text & "," & txtNombreBuscar.Text.Replace(" ", "%"), "intProveedor,vchNombre", dtsProveedores.Tables("Proveedores"))
+                strMensaje = clsFuncion.Llena_Dataset("Migracion", dtsProveedores, "Proveedores", "Cargar_Proveedores", txtNumProveedor.Text & "," & txtNombreBuscar.Text.Replace(" ", "%"), "intProveedor,vchNombre", dtsProveedores.Tables("Proveedores"))
                 If strMensaje = "OK" Then '' se realizo la busqueda  con exito
                     If dtsProveedores.Tables("Proveedores").Rows.Count > 0 Then ' si existen proveedores
                         If dtsProveedores.Tables("Proveedores").Rows.Count = 1 Then
@@ -64,7 +65,7 @@ Partial Class wfrmSolicitarCotizacion
                         Dim dtResultado As New DataTable
                         Dim Contador As Integer
                         '' se agreagan las columnas con los datos del proveedor para recibir el dataset
-                        dtResultado.Columns.AddRange(New DataColumn(6) {New DataColumn("noproveedor"), New DataColumn("nombre"), New DataColumn("domicilio"), New DataColumn("cidudad"), New DataColumn("rfc"), New DataColumn("nomfis"), New DataColumn("Seleccionar")})
+                        dtResultado.Columns.AddRange(New DataColumn(9) {New DataColumn("noproveedor"), New DataColumn("nombre"), New DataColumn("domicilio"), New DataColumn("cidudad"), New DataColumn("rfc"), New DataColumn("nomfis"), New DataColumn("mail"), New DataColumn("contra"), New DataColumn("telefono"), New DataColumn("Seleccionar")})
                         ' se llena la tabla con los datos del dataset
                         For Contador = 0 To dtsProveedores.Tables("Proveedores").Rows.Count - 1
 
@@ -73,7 +74,9 @@ Partial Class wfrmSolicitarCotizacion
                                                  dtsProveedores.Tables("Proveedores").Rows(Contador).Item(2),
                                                  dtsProveedores.Tables("Proveedores").Rows(Contador).Item(3),
                                                  dtsProveedores.Tables("Proveedores").Rows(Contador).Item(4),
-                                                 dtsProveedores.Tables("Proveedores").Rows(Contador).Item(5)
+                                                 dtsProveedores.Tables("Proveedores").Rows(Contador).Item(5),
+                                                 dtsProveedores.Tables("Proveedores").Rows(Contador).Item(6),
+                                                 dtsProveedores.Tables("Proveedores").Rows(Contador).Item(7)
                                                  )
 
                         Next
@@ -85,24 +88,24 @@ Partial Class wfrmSolicitarCotizacion
                         pnlProveedor.Visible = True
 
                     Else
-                        Alert("No se encontraron proveedores con este nombre o no. de proveedor")
+                        Alert("No se encontraron proveedores con este nombre o no. de proveedor", Me, 1, 3)
                     End If
 
 
                 Else
-                    Alert("No se pudo buscar el proveedor " & txtNombreBuscar.Text.Replace("'", "") & ": " & strMensaje.Replace("'", "") & "")
+                    Alert("No se pudo buscar el proveedor " & txtNombreBuscar.Text.Replace("'", "") & ": " & strMensaje.Replace("'", "") & "", Me, 1, 3)
 
                 End If
 
             Else
 
-                Alert("Favor de buscar con el nombre o numero de proveedor ")
+                Alert("Favor de buscar con el nombre o numero de proveedor ", Me, 1, 3)
             End If
 
 
         Catch ex As Exception
-            Alert("Error: " & ex.Message.Replace("'", "") & "")
-            ScriptManager.RegisterStartupScript(Me, Me.GetType(), "script234", "document.getElementById('dialog').style.display='none';alert('');", True)
+            Alert("Error: " & ex.Message.Replace("'", "") & "", Me, 1, 4)
+
         End Try
     End Sub
 
@@ -110,7 +113,7 @@ Partial Class wfrmSolicitarCotizacion
 
         If (e.CommandName = "AgregarProveedor") Then
             Dim dtProveedores As New DataTable()
-            dtProveedores.Columns.AddRange(New DataColumn(6) {New DataColumn("noProveedor"), New DataColumn("nombre"), New DataColumn("domicilio"), New DataColumn("ciudad"), New DataColumn("rfc"), New DataColumn("nomfis"), New DataColumn("seleccionado")})
+            dtProveedores.Columns.AddRange(New DataColumn(9) {New DataColumn("noProveedor"), New DataColumn("nombre"), New DataColumn("domicilio"), New DataColumn("ciudad"), New DataColumn("rfc"), New DataColumn("nomfis"), New DataColumn("mail"), New DataColumn("contra"), New DataColumn("telefono"), New DataColumn("seleccionado")})
             Dim intIndex As Integer = Convert.ToInt32(e.CommandArgument)
 
 
@@ -154,7 +157,7 @@ Partial Class wfrmSolicitarCotizacion
     Protected Sub grvRequisiciones_rowCommand(sender As Object, e As GridViewCommandEventArgs) Handles grvRequisiciones.RowCommand
         If (e.CommandName = "Aprobar") Then
             Dim dtAprobadas As New DataTable()
-            dtAprobadas.Columns.AddRange(New DataColumn(15) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus"), New DataColumn("fechaSolicitud"), New DataColumn("nombreProveedor")})
+            dtAprobadas.Columns.AddRange(New DataColumn(16) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus"), New DataColumn("fechaSolicitud"), New DataColumn("nombreProveedor"), New DataColumn("total")})
 
 
             Dim dtRequis As New DataTable()
@@ -277,19 +280,24 @@ Partial Class wfrmSolicitarCotizacion
 
                             If strMensaje <> "OK" Then
 
-
-                                Alert("Error al guardar solicitudes")
+                                Alert("Error al guardar solicitudes", Me, 1, 4)
                             Else
+                                'Si tiene email
+                                If rowen.Item(2) <> "" Then
+                                    '   EnviarCorreo()
+                                End If
                                 okCount &= If(okCount = "", dtsCotiza.Tables("Cotizacion").Rows(0).Item(0).ToString, " - " & dtsCotiza.Tables("Cotizacion").Rows(0).Item(0).ToString)
                             End If
 
 
                         Next
 
+
+
                         If okCount <> "" Then
-                            Alert("Se han generado las siguientes solicitudes correctamente: " & okCount & "")
+                            Alert("Se han generado las siguientes solicitudes correctamente: " & okCount & "", Me, 1, 4)
                         Else
-                            Alert("Error al guardar solicitudes")
+                            Alert("Error al guardar solicitudes", Me, 1, 4)
                         End If
 
                         'Session("Cotizacion") = dtAprobadas
@@ -299,17 +307,17 @@ Partial Class wfrmSolicitarCotizacion
 
                         Timer1.Enabled = True
                     Else
-                        Alert("Favor de seleccionar articulos para cotizar")
+                        Alert("Favor de seleccionar articulos para cotizar", Me, 1, 3)
                     End If
                 Else
-                    Alert("Favor de seleccionar proveedores ")
+                    Alert("Favor de seleccionar proveedores ", Me, 1, 3)
                 End If
             Else
-                Alert("Debe especificar un tiempo de entrega ")
+                Alert("Debe especificar un tiempo de entrega ", Me, 1, 3)
             End If
 
         Catch ex As Exception
-            Alert("Error al guardar cambios: " & ex.Message & ": ")
+            Alert("Error al guardar cambios: " & ex.Message & ": ", Me, 1, 4)
         End Try
     End Sub
 
@@ -330,7 +338,7 @@ Partial Class wfrmSolicitarCotizacion
             End If
 
         Catch ex As Exception
-            Alert("Error al guardar cambios: " & ex.Message & ": ")
+            Alert("Error al guardar cambios: " & ex.Message & ": ", Me, 1, 4)
         End Try
     End Sub
 
@@ -364,65 +372,8 @@ Partial Class wfrmSolicitarCotizacion
 
 #Region "Procedimientos"
 
-    Private Sub EnviarCorreo(ByVal Mensaje As String, ByVal EMail As String)
-        Try
-            'MsgBox(EMail + vbNewLine + ArchivoXML)
-            Dim _Message As New System.Net.Mail.MailMessage()
-            Dim _SMTP As New System.Net.Mail.SmtpClient
-            'CONFIGURACIÓN DEL STMP
 
-            _SMTP.Credentials = New System.Net.NetworkCredential("extranet@jmaschihuahua.gob.mx", "Jmaschihuahua-15")
-            '_SMTP.Host = "mail.jmaschihuahua.gob.mx"
-            _SMTP.Host = "74.220.207.110"
-            _SMTP.Port = 25
-            _SMTP.EnableSsl = False
-            ''_SMTP.UseDefaultCredentials = True
 
-            ' CONFIGURACION DEL MENSAJE 
-            _Message.[To].Add(EMail)
-            '_Message.[To].Add("mcfierro@jmaschihuahua.gob.mx")
-            '_Message.[To].Add("hcedillo78@hotmail.com")
-
-            'Cuenta de Correo al que se le quiere enviar el e-mail 
-            _Message.From = New System.Net.Mail.MailAddress("extranet@jmaschihuahua.gob.mx", "Extranet", System.Text.Encoding.UTF8)
-            'Quien lo envía 
-            _Message.Subject = "Salida de Almacen JMAS Chihuahua"
-            'Sujeto del e-mail 
-            _Message.SubjectEncoding = System.Text.Encoding.UTF8
-            'Codificacion 
-            _Message.Body = Mensaje
-            'contenido del mail 
-            _Message.BodyEncoding = System.Text.Encoding.UTF8
-            _Message.Priority = System.Net.Mail.MailPriority.High
-            _Message.IsBodyHtml = False
-            'ADICION DE DATOS ADJUNTOS 
-            ''Dim _File As String = My.Application.Info.DirectoryPath & Archivo
-            'Dim _FileXML As String = ArchivoXML
-            'archivo que se quiere adjuntar 
-            'Dim _AttachmentXML As New System.Net.Mail.Attachment(_FileXML, System.Net.Mime.MediaTypeNames.Application.Octet)
-            '_Message.Attachments.Add(_AttachmentXML)
-            'Dim _FilePDF As String = ArchivoPDF
-            'archivo que se quiere adjuntar 
-            'Dim _AttachmentPDF As New System.Net.Mail.Attachment(_FilePDF, System.Net.Mime.MediaTypeNames.Application.Octet)
-            '_Message.Attachments.Add(_AttachmentPDF)
-
-            'ENVIO 
-            Try
-                _SMTP.Send(_Message)
-                _SMTP = Nothing
-                _Message = Nothing
-            Catch ex As System.Net.Mail.SmtpException
-                Alert("Error al enviar el correo de confirmacion:" & ex.Message)
-                'MsgBox(ex.ToString)
-            End Try
-        Catch ex As Exception
-            Alert("Error al enviar el correo de confirmacion:" & ex.Message)
-        End Try
-    End Sub
-
-    Private Sub Alert(ByVal strMensaje As String)
-        ScriptManager.RegisterStartupScript(Me, Me.GetType(), "script234", "alert('" & strMensaje & "');", True)
-    End Sub
 
 #End Region
 

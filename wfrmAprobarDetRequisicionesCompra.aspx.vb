@@ -7,8 +7,8 @@ Partial Class wfrmAprobarDetRequisicionesCompra
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
         'Usuario y perfil de prueba
-        Session("IdUsuario") = 4
-        Session("idPerfil") = 24
+        'Session("IdUsuario") = 4
+        'Session("idPerfil") = 24
         Session("caller") = "wfrmAprobarDetRequisicionesCompra.aspx"
 
         If Not Page.IsPostBack Then
@@ -29,7 +29,6 @@ Partial Class wfrmAprobarDetRequisicionesCompra
                 Select Case hdnProfileId.Value
                     Case 22
                         filterEstatus = "1"
-
                     Case 24
                         filterEstatus = "5"
                     Case 26

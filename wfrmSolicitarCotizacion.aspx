@@ -162,6 +162,8 @@
                                         <asp:BoundField DataField="ciudad" HeaderText="CIUDAD" Visible="false"/> 
                                         <asp:BoundField DataField="rfc" HeaderText="RFC" Visible="false"/>
                                         <asp:BoundField DataField="nomfis" HeaderText="NOMBRE FISCAL"/>
+                                        <asp:BoundField DataField="mail" HeaderText="E-MAIL"/>    
+                                        <asp:BoundField DataField="telefono" HeaderText="TELEFONO"/>
                                          <asp:TemplateField>
                                             <ItemTemplate>                          
                                  <asp:ImageButton ID="AddProvButton" runat="server" Height="15" ImageUrl="imagenes/ok.png"
@@ -184,8 +186,8 @@
                     <Columns>    
                             <asp:BoundField DataField="noProveedor" HeaderText="ID"/>    
                             <asp:BoundField DataField="nombre" HeaderText="NOMBRE"/>    
-                   <%--         <asp:BoundField DataField="mail" HeaderText="E-MAIL"/>    
-                            <asp:BoundField DataField="telefono" HeaderText="TELEFONO"/>--%>
+                            <asp:BoundField DataField="mail" HeaderText="E-MAIL"/>    
+                            <asp:BoundField DataField="telefono" HeaderText="TELEFONO"/>
                             
                           <asp:TemplateField>
                             <ItemTemplate>                          

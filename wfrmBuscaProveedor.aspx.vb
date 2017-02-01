@@ -17,7 +17,7 @@ Partial Class wfrmBuscaProveedor
                 Dim strMensaje As String
                 Dim dtsProveedores As New DataSet
                 Dim clsFuncion As New clsFunciones
-                strMensaje = clsFuncion.Llena_Dataset("Filtros", dtsProveedores, "Proveedores", "Cargar_Proveedores", txtNumProveedor.Text & "," & txtNombreBuscar.Text.Replace(" ", "%"), "intProveedor,vchNombre", dtsProveedores.Tables("Proveedores"))
+                strMensaje = clsFuncion.Llena_Dataset("Migracion", dtsProveedores, "Proveedores", "Cargar_Proveedores", txtNumProveedor.Text & "," & txtNombreBuscar.Text.Replace(" ", "%"), "intProveedor,vchNombre", dtsProveedores.Tables("Proveedores"))
                 If strMensaje = "OK" Then '' se realizo la busqueda  con exito
                     If dtsProveedores.Tables("Proveedores").Rows.Count > 0 Then ' si existen proveedores
                         If dtsProveedores.Tables("Proveedores").Rows.Count = 1 Then ' solo existe un proveedor se cargan los datos en la forma del contrato
@@ -32,7 +32,7 @@ Partial Class wfrmBuscaProveedor
 
                         ' lleno el grid de proveedores
                         Dim dtResultado As New DataTable
-                        Dim Contador As Integer
+                        Dim contador As Integer
                         '' se agreagan las columnas con los datos del proveedor para recibir el dataset
                         dtResultado.Columns.AddRange(New DataColumn(6) {New DataColumn("noproveedor"), New DataColumn("nombre"), New DataColumn("domicilio"), New DataColumn("cidudad"), New DataColumn("rfc"), New DataColumn("nomfis"), New DataColumn("Seleccionar")})
                         ' se llena la tabla con los datos del dataset
