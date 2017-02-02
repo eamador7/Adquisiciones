@@ -2,16 +2,17 @@
 Imports clsFunciones
 
 
-Partial Class wfrmAprobarDetRequisicionesCompraCopy
+Partial Class wfrmAutorizarPresupuesto
     Inherits System.Web.UI.Page
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
         'Usuario y perfil de prueba
-        Session("IdUsuario") = 4
-        Session("idPerfil") = 24
-        Session("caller") = "wfrmAprobarDetRequisicionesCompra.aspx"
-        grvSolicitudes.Columns(6).Visible = False
+        'Session("IdUsuario") = 4
+        'Session("idPerfil") = 24
+        Session("caller") = "wfrmAutorizarPresupuesto.aspx"
+
         If Not Page.IsPostBack Then
+            grvSolicitudes.Columns(6).Visible = False
             Alert("Recuerde que todas los artículos de las requisiciones utilizadas que no sean autorizados se cancelaran automáticamente.", Me, 1, 5)
             Dim clsFunciones As New clsFunciones
             Dim dtsEstatus As New DataSet
@@ -21,30 +22,16 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
             dt.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
 
 
-            Dim filterEstatus As String = ""
-            hdnProfileId.Value = Session("idPerfil")
-            ' 22 - Jefe de departamento | 24 - Director correspondiente | 26 - Director Administrativo
-            If hdnProfileId.Value <> "" Then
-                Select Case hdnProfileId.Value
-                    Case 22
-                        filterEstatus = "1"
+            Dim filterEstatus As String = "11-12"
 
-                    Case 24
-                        filterEstatus = "5"
-                    Case 26
-                        filterEstatus = "5-6"
-                    Case Else
-                        filterEstatus = "1"
-                End Select
-            End If
+            'DEPTOTEST
+            Session("departamento") = 506
 
             Dim dtsSolicitudes As New DataSet
-            'strMensaje = clsFunciones.Llena_Grid(grvSolicitudes, "MIGRACION", dtsRequisiciones, "Requisiciones", "Cargar_RequisicionesCompra", _
-            '            txtRequisicion.Text & "," & filterEstatus & "," & txtFechaDesde.Text & "," & txtFechaHasta.Text & "," & Session("departamento") & ",0", _
-            '            "@intIdRequisicion,@vchIdEstatus,@vchFechaDesde,@vchFechaHasta,@intDepartamento,@intConContrato")
+
 
             strMensaje = clsFunciones.Llena_Grid(grvSolicitudes, "MIGRACION", dtsSolicitudes, "Solicitudes", "Cargar_RequisicionesCompra",
-            txtRequisicion.Text & "," & filterEstatus & "," & txtFechaDesde.Text & "," & txtFechaHasta.Text & "," & Session("departamento") & ",1",
+             "," & filterEstatus & ",,," & Session("departamento") & ",1",
             "@intIdRequisicion,@vchIdEstatus,@vchFechaDesde,@vchFechaHasta,@intDepartamento")
 
             If strMensaje = "OK" Then
@@ -55,13 +42,18 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
                 ViewState("Requisiciones") = Nothing
                 grvRequisiciones.DataSource = Nothing
                 grvRequisiciones.DataBind()
+                'Materiales
                 ViewState("Detalle") = Nothing
                 grvAprobadas.DataSource = Nothing
                 grvAprobadas.DataBind()
+                'Servicios
+                ViewState("Detalle1") = Nothing
+                grvAprobadas.DataSource = Nothing
+                grvAprobadas.DataBind()
                 'Canceladas manual
-                'ViewState("Detalle2") = Nothing
-                'grvCanceladas.DataSource = Nothing
-                'grvCanceladas.DataBind()
+                ViewState("Detalle2") = Nothing
+                grvCanceladas.DataSource = Nothing
+                grvCanceladas.DataBind()
             Else
                 ScriptManager.RegisterStartupScript(Me, Me.GetType(), "script234", "alert('Error al cargar las Requisiciones: " & strMensaje.Replace("'", "") & "');", True)
             End If
@@ -103,28 +95,26 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
 
             Dim strMensaje As String
             Dim dtsRequisiciones As New DataSet
+            Dim dtsPresupuesto As New DataSet
+            Dim dtPresupuesto As New DataTable
 
-            Dim filterEstatus As String = ""
-            hdnProfileId.Value = Session("idPerfil")
-            ' 22 - Jefe de departamento | 24 - Director correspondiente | 26 - Director Administrativo
-            If hdnProfileId.Value <> "" Then
-                Select Case hdnProfileId.Value
-                    Case 22
-                        filterEstatus = "1"
-                        grvRequisiciones.Columns(5).Visible = False
-                        grvSolicitudes.Columns(6).Visible = False
-                    Case 24
-                        filterEstatus = "5"
-                        grvRequisiciones.Columns(5).Visible = True
-                        grvSolicitudes.Columns(6).Visible = True
-                    Case 26
-                        filterEstatus = "5-6"
-                        grvRequisiciones.Columns(5).Visible = True
-                        grvSolicitudes.Columns(6).Visible = True
-                    Case Else
-                        filterEstatus = "1"
-                End Select
+
+            'Presupuesto disponible
+            strMensaje = clsFunciones.Llena_Dataset("MIGRACION", dtsPresupuesto, "Presupuesto", "Cargar_Presupuesto_Depto",
+                        Session("departamento").ToString() + "0",
+                        "@intIdDepartamento", dtPresupuesto)
+            If strMensaje = "OK" Then
+                lblDepartamento.Text = dtsPresupuesto.Tables("Presupuesto").Rows(0).Item(1).ToString().Trim()
+                lblMateriales.Text = "$" + CDec(dtsPresupuesto.Tables("Presupuesto").Rows(0).Item(2)).ToString("###,###,##0.00") 'materiales
+                lblServicios.Text = "$" + CDec(dtsPresupuesto.Tables("Presupuesto").Rows(0).Item(3)).ToString("###,###,##0.00") 'servicios
+                lblTotal.Text = "$" + (CDec(dtsPresupuesto.Tables("Presupuesto").Rows(0).Item(2)) + CDec(dtsPresupuesto.Tables("Presupuesto").Rows(0).Item(3))).ToString("###,###,##0.00") 'Total
+                pnlInfo.Visible = True
             End If
+
+            'Detalle de requisiciones
+            Dim filterEstatus As String = "11-12"
+
+
 
             strMensaje = clsFunciones.Llena_Grid(grvRequisiciones, "MIGRACION", dtsRequisiciones, "Requisiciones", "Cargar_DetallesRequisicionCompraAprobacion",
                        hdnIdRequisicionSel.Value.ToString & ", , , " & filterEstatus & "," & Session("departamento"),
@@ -154,7 +144,7 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
 
 
     Protected Sub grvRequisiciones_rowCommand(sender As Object, e As GridViewCommandEventArgs) Handles grvRequisiciones.RowCommand
-        If (e.CommandName = "Aprobar") Then
+        If (e.CommandName = "Material") Then
             Dim dtAprobadas As New DataTable()
             dtAprobadas.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
 
@@ -176,16 +166,25 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
                     Exit Sub
                 End If
             Next
-            'Canceladas manualmente
-            'For i = 0 To grvCanceladas.Rows.Count - 1
-            '    If ViewState("Requisiciones").Rows(index).Item(0) = grvCanceladas.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvCanceladas.Rows(i).Cells(1).Text Then
-            '        Alert("El elemento ya fue agregado previamente")
-            '        Exit Sub
-            '    End If
-            'Next
+            'Servicios
+            For i = 0 To grvServicios.Rows.Count - 1
+                If ViewState("Requisiciones").Rows(index).Item(0) = grvServicios.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvServicios.Rows(i).Cells(1).Text Then
+                    Alert("El elemento ya fue agregado previamente", Me, 1, 3)
+                    Exit Sub
+                End If
+            Next
+            '   Canceladas manualmente
+            For i = 0 To grvCanceladas.Rows.Count - 1
+                If ViewState("Requisiciones").Rows(index).Item(0) = grvCanceladas.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvCanceladas.Rows(i).Cells(1).Text Then
+                    Alert("El elemento ya fue agregado previamente", Me, 1, 3)
+                    Exit Sub
+                End If
+            Next
 
             'Incrementar lo seleccionado
-            ViewState("Solicitudes").rows(hdnRequiIndex.Value).item(12) += (ViewState("Requisiciones").Rows(index).Item(4) * ViewState("Requisiciones").Rows(index).Item(5))
+            Dim indiceUsar As Integer = 0
+            indiceUsar = hdnRequiIndex.Value
+            ViewState("Solicitudes").rows(indiceUsar).item(12) += CDec(ViewState("Requisiciones").Rows(index).Item(4) * ViewState("Requisiciones").Rows(index).Item(5))
 
             Dim dt As DataTable = ViewState("Solicitudes")
             grvSolicitudes.DataSource = dt
@@ -200,19 +199,22 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
             ViewState("Requisiciones") = dtRequis
             grvRequisiciones.DataSource = dtRequis
             grvRequisiciones.DataBind()
+            'Servicios
+        ElseIf (e.CommandName = "Service") Then
 
-        ElseIf (e.CommandName = "Cancelar") Then
-            'Dim dtCanceladas As New DataTable()
-            'dtCanceladas.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+            Dim dtService As New DataTable()
+            dtService.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+
             Dim index As Integer = Convert.ToInt32(e.CommandArgument)
             Dim dtRequis As New DataTable()
             If Not ViewState("Requisiciones") Is Nothing Then
                 dtRequis = ViewState("Requisiciones")
             End If
 
-            'If Not ViewState("Detalle2") Is Nothing Then
-            '    dtCanceladas = ViewState("Detalle2")
-            'End If
+            If Not ViewState("Detalle1") Is Nothing Then
+                dtService = ViewState("Detalle1")
+            End If
+
             'Recorrer el detalle verificando que no se haya duplicado ningun elemento
             Dim i As Integer
             For i = 0 To grvAprobadas.Rows.Count - 1
@@ -221,21 +223,91 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
                     Exit Sub
                 End If
             Next
-            'Canceladas manualmente
-            'For i = 0 To grvCanceladas.Rows.Count - 1
-            '    If ViewState("Requisiciones").Rows(index).Item(0) = grvCanceladas.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvCanceladas.Rows(i).Cells(1).Text Then
-            '        Alert("El elemento ya fue agregado previamente")
-            '        Exit Sub
-            '    End If
-            'Next
+            'Servicios
+            For i = 0 To grvServicios.Rows.Count - 1
+                If ViewState("Requisiciones").Rows(index).Item(0) = grvServicios.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvServicios.Rows(i).Cells(1).Text Then
+                    Alert("El elemento ya fue agregado previamente", Me, 1, 3)
+                    Exit Sub
+                End If
+            Next
+            '   Canceladas manualmente
+            For i = 0 To grvCanceladas.Rows.Count - 1
+                If ViewState("Requisiciones").Rows(index).Item(0) = grvCanceladas.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvCanceladas.Rows(i).Cells(1).Text Then
+                    Alert("El elemento ya fue agregado previamente", Me, 1, 3)
+                    Exit Sub
+                End If
+            Next
 
+            'Incrementar lo seleccionado
+            '    Dim indiceUsar As Integer = 0
+            '    indiceUsar = hdnRequiIndex.Value
+            '  ViewState("Solicitudes").rows(indiceUsar).item(12) += CDec(ViewState("Requisiciones").Rows(index).Item(4) * ViewState("Requisiciones").Rows(index).Item(5))
 
-            'dtCanceladas.Rows.Add(dtRequis.Rows.Item(CInt(e.CommandArgument)).ItemArray)
+            Dim dt As DataTable = ViewState("Solicitudes")
+            grvSolicitudes.DataSource = dt
+            grvSolicitudes.DataBind()
 
-            'ViewState("Detalle2") = dtCanceladas
-            'grvCanceladas.DataSource = dtCanceladas
-            'grvCanceladas.DataBind()
+            dtService.Rows.Add(dtRequis.Rows.Item(CInt(e.CommandArgument)).ItemArray)
+            ViewState("Detalle1") = dtService
+            grvServicios.DataSource = dtService
+            grvServicios.DataBind()
 
+            dtRequis.Rows.RemoveAt(CInt(e.CommandArgument))
+            ViewState("Requisiciones") = dtRequis
+            grvRequisiciones.DataSource = dtRequis
+            grvRequisiciones.DataBind()
+            'Canceladas
+        ElseIf (e.CommandName = "Cancelar") Then
+
+            Dim dtCanceladas As New DataTable()
+            dtCanceladas.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+
+            Dim index As Integer = Convert.ToInt32(e.CommandArgument)
+            Dim dtRequis As New DataTable()
+            If Not ViewState("Requisiciones") Is Nothing Then
+                dtRequis = ViewState("Requisiciones")
+            End If
+
+            If Not ViewState("Detalle2") Is Nothing Then
+                dtCanceladas = ViewState("Detalle2")
+            End If
+
+            'Recorrer el detalle verificando que no se haya duplicado ningun elemento
+            Dim i As Integer
+            For i = 0 To grvAprobadas.Rows.Count - 1
+                If ViewState("Requisiciones").Rows(index).Item(0) = grvAprobadas.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvAprobadas.Rows(i).Cells(1).Text Then
+                    Alert("El elemento ya fue agregado previamente", Me, 1, 3)
+                    Exit Sub
+                End If
+            Next
+            'Servicios
+            For i = 0 To grvServicios.Rows.Count - 1
+                If ViewState("Requisiciones").Rows(index).Item(0) = grvServicios.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvServicios.Rows(i).Cells(1).Text Then
+                    Alert("El elemento ya fue agregado previamente", Me, 1, 3)
+                    Exit Sub
+                End If
+            Next
+            '   Canceladas manualmente
+            For i = 0 To grvCanceladas.Rows.Count - 1
+                If ViewState("Requisiciones").Rows(index).Item(0) = grvCanceladas.Rows(i).Cells(0).Text And ViewState("Requisiciones").Rows(index).Item(1) = grvCanceladas.Rows(i).Cells(1).Text Then
+                    Alert("El elemento ya fue agregado previamente", Me, 1, 3)
+                    Exit Sub
+                End If
+            Next
+
+            'Incrementar lo seleccionado
+            '    Dim indiceUsar As Integer = 0
+            '    indiceUsar = hdnRequiIndex.Value
+            '  ViewState("Solicitudes").rows(indiceUsar).item(12) += CDec(ViewState("Requisiciones").Rows(index).Item(4) * ViewState("Requisiciones").Rows(index).Item(5))
+
+            Dim dt As DataTable = ViewState("Solicitudes")
+            grvSolicitudes.DataSource = dt
+            grvSolicitudes.DataBind()
+
+            dtCanceladas.Rows.Add(dtRequis.Rows.Item(CInt(e.CommandArgument)).ItemArray)
+            ViewState("Detalle2") = dtCanceladas
+            grvCanceladas.DataSource = dtCanceladas
+            grvCanceladas.DataBind()
 
             dtRequis.Rows.RemoveAt(CInt(e.CommandArgument))
             ViewState("Requisiciones") = dtRequis
@@ -269,6 +341,15 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
                 grvRequisiciones.DataSource = dtRequis
                 grvRequisiciones.DataBind()
             End If
+            'Decrementar lo seleccionado
+            Dim indiceUsar As Integer = 0
+            indiceUsar = hdnRequiIndex.Value
+            ViewState("Solicitudes").rows(indiceUsar).item(12) -= CDec(ViewState("Detalle").Rows(index).Item(4) * ViewState("Detalle").Rows(index).Item(5))
+
+            Dim dt As DataTable = ViewState("Solicitudes")
+            grvSolicitudes.DataSource = dt
+            grvSolicitudes.DataBind()
+
 
 
             dtAprobadas.Rows.RemoveAt(CInt(e.CommandArgument))
@@ -279,37 +360,80 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
         End If
     End Sub
 
-    'Protected Sub grvCanceladas_RowCommand(sender As Object, e As GridViewCommandEventArgs) Handles grvCanceladas.RowCommand
-    '    If (e.CommandName = "Eliminar") Then
-    '        Dim dtRequis As New DataTable()
-    '        dtRequis.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+    Protected Sub grvServicios_RowCommand(sender As Object, e As GridViewCommandEventArgs) Handles grvServicios.RowCommand
+        If (e.CommandName = "Eliminar") Then
+            Dim dtRequis As New DataTable()
+            dtRequis.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
 
 
-    '        Dim dtCanceladas As New DataTable()
-    '        If Not ViewState("Detalle2") Is Nothing Then
-    '            dtCanceladas = ViewState("Detalle2")
-    '        End If
+            Dim dtService As New DataTable()
+            If Not ViewState("Detalle1") Is Nothing Then
+                dtService = ViewState("Detalle1")
+            End If
 
-    '        If Not ViewState("Requisiciones") Is Nothing Then
-    '            dtRequis = ViewState("Requisiciones")
-    '        End If
+            If Not ViewState("Requisiciones") Is Nothing Then
+                dtRequis = ViewState("Requisiciones")
+            End If
 
-    '        'Regresa a la lista de la parte superior si se trata de la misma requisicion, de lo contrario, unicamente se remueve (simulando que volvio a la req origen)
-    '        Dim index As Integer = Convert.ToInt32(e.CommandArgument)
-    '        Dim aRemoverId As String = grvCanceladas.Rows(index).Cells(0).Text
-    '        If hdnIdRequisicionSel.Value = aRemoverId Then
-    '            dtRequis.Rows.Add(dtCanceladas.Rows.Item(CInt(e.CommandArgument)).ItemArray)
-    '            ViewState("Requisiciones") = dtRequis
-    '            grvRequisiciones.DataSource = dtRequis
-    '            grvRequisiciones.DataBind()
-    '        End If
+            'Regresa a la lista de la parte superior si se trata de la misma requisicion, de lo contrario, unicamente se remueve (simulando que volvio a la req origen)
+            Dim index As Integer = Convert.ToInt32(e.CommandArgument)
+            Dim aRemoverId As String = grvServicios.Rows(index).Cells(0).Text
+            If hdnIdRequisicionSel.Value = aRemoverId Then
+                dtRequis.Rows.Add(dtService.Rows.Item(CInt(e.CommandArgument)).ItemArray)
+                ViewState("Requisiciones") = dtRequis
+                grvRequisiciones.DataSource = dtRequis
+                grvRequisiciones.DataBind()
+            End If
+            'Decrementar lo seleccionado
+            Dim indiceUsar As Integer = 0
+            indiceUsar = hdnRequiIndex.Value
+            ViewState("Solicitudes").rows(indiceUsar).item(12) -= CDec(ViewState("Detalle1").Rows(index).Item(4) * ViewState("Detalle1").Rows(index).Item(5))
 
-    '        dtCanceladas.Rows.RemoveAt(CInt(e.CommandArgument))
-    '        ViewState("Detalle2") = dtCanceladas
-    '        grvCanceladas.DataSource = dtCanceladas
-    '        grvCanceladas.DataBind()
-    '    End If
-    'End Sub
+            Dim dt As DataTable = ViewState("Solicitudes")
+            grvSolicitudes.DataSource = dt
+            grvSolicitudes.DataBind()
+
+
+
+            dtService.Rows.RemoveAt(CInt(e.CommandArgument))
+            ViewState("Detalle1") = dtService
+            grvServicios.DataSource = dtService
+            grvServicios.DataBind()
+
+        End If
+    End Sub
+
+    Protected Sub grvCanceladas_RowCommand(sender As Object, e As GridViewCommandEventArgs) Handles grvCanceladas.RowCommand
+        If (e.CommandName = "Eliminar") Then
+            Dim dtRequis As New DataTable()
+            dtRequis.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+
+
+            Dim dtCanceladas As New DataTable()
+            If Not ViewState("Detalle2") Is Nothing Then
+                dtCanceladas = ViewState("Detalle2")
+            End If
+
+            If Not ViewState("Requisiciones") Is Nothing Then
+                dtRequis = ViewState("Requisiciones")
+            End If
+
+            'Regresa a la lista de la parte superior si se trata de la misma requisicion, de lo contrario, unicamente se remueve (simulando que volvio a la req origen)
+            Dim index As Integer = Convert.ToInt32(e.CommandArgument)
+            Dim aRemoverId As String = grvCanceladas.Rows(index).Cells(0).Text
+            If hdnIdRequisicionSel.Value = aRemoverId Then
+                dtRequis.Rows.Add(dtCanceladas.Rows.Item(CInt(e.CommandArgument)).ItemArray)
+                ViewState("Requisiciones") = dtRequis
+                grvRequisiciones.DataSource = dtRequis
+                grvRequisiciones.DataBind()
+            End If
+
+            dtCanceladas.Rows.RemoveAt(CInt(e.CommandArgument))
+            ViewState("Detalle2") = dtCanceladas
+            grvCanceladas.DataSource = dtCanceladas
+            grvCanceladas.DataBind()
+        End If
+    End Sub
 
 
     Protected Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
@@ -381,21 +505,21 @@ Partial Class wfrmAprobarDetRequisicionesCompraCopy
                     End If
 
                 Next
-                'Canceladas manualmente
-                'For Each rowen As GridViewRow In grvCanceladas.Rows
-                '    strMensaje = clsFunciones.EjecutaProcedimiento("MIGRACION", "Actualiza_Estatus_RequisicionCompra",
-                '           rowen.Cells(0).Text & "," & rowen.Cells(1).Text & ",9," & Session("IdUsuario") & "," & txtObservaciones.Text & ",0",
-                '            "@intRequisicion,@intDetRequisicion,@intEstatus,@intIdUsuarioCaptura,@vchComentarios,@decPrecio")
+                '  Canceladas manualmente
+                For Each rowen As GridViewRow In grvCanceladas.Rows
+                    strMensaje = clsFunciones.EjecutaProcedimiento("MIGRACION", "Actualiza_Estatus_RequisicionCompra",
+                           rowen.Cells(0).Text & "," & rowen.Cells(1).Text & ",9," & Session("IdUsuario") & ",,0",
+                            "@intRequisicion,@intDetRequisicion,@intEstatus,@intIdUsuarioCaptura,@vchComentarios,@decPrecio")
 
-                '    If strMensaje = "OK" Then
+                    If strMensaje = "OK" Then
 
 
-                '    Else
-                '        Alert("Error al guardar cambios " & strMensaje)
-                '        Exit Sub
-                '    End If
+                    Else
+                        Alert("Error al guardar cambios " & strMensaje, Me, 1, 4)
+                        Exit Sub
+                    End If
 
-                'Next
+                Next
                 'strMensaje = "OK"
 
                 'Cancelar articulos no autorizados

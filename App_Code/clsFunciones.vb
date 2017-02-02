@@ -75,7 +75,7 @@ Public Class clsFunciones
                             comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), CDbl(arrParametros(i)))
 
                         Else
-                            comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), arrParametros(i).Replace("-", "").Replace("*", ",").Replace("|", ","))
+                            comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), arrParametros(i).Replace("-", "").Replace("*", ",").Replace("|", ",").Replace("#", ""))
                         End If
                     Next
                 End If
@@ -106,7 +106,7 @@ Public Class clsFunciones
                         If IsNumeric(arrParametros(i)) Then
                             comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), CDbl(arrParametros(i)))
                         Else
-                            comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), arrParametros(i).Replace("-", ",").Replace("*", ","))
+                            comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), arrParametros(i).Replace("-", ",").Replace("*", ",").Replace("#", ""))
                         End If
                     Next
                 End If
@@ -148,7 +148,7 @@ Public Class clsFunciones
                         If IsNumeric(arrParametros(i)) Then
                             comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), CDbl(arrParametros(i)))
                         Else
-                            comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), arrParametros(i).Replace("-", ",").Replace("*", ","))
+                            comProcedimiento.Parameters.AddWithValue(arrNobreParametros(i), arrParametros(i).Replace("-", ",").Replace("*", ",").Replace("#", ""))
                         End If
                     Next
                 End If
@@ -320,7 +320,7 @@ Public Class clsFunciones
             Case Else
                 messageType = "alert"
         End Select
-        ScriptManager.RegisterStartupScript(mySender, mySender.GetType(), "script234", "noty({text: '" & strMensaje & "', layout: '" & messagePosition & "', closeWith: ['click', 'hover'], type: '" & messageType & "'});", True)
+        ScriptManager.RegisterStartupScript(mySender, mySender.GetType(), "script234", "noty({text: '" & strMensaje & "', layout: '" & messagePosition & "', closeWith: ['click', 'hover'], timeout: [3000], type: '" & messageType & "'});", True)
     End Sub
 
 
