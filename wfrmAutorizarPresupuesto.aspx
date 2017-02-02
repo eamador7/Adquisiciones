@@ -175,10 +175,10 @@
         </div>  
         </asp:panel>
            <hr />
-            <div class ="panel panel-body">
+            <asp:panel ID="pnlCancelados" runat="server" class ="panel panel-body" Visible="False">
             <div class="row">
             <div class="col-md-12">
-                  <h4>A CANCELAR:</h4>
+                  <h4>A cancelar:</h4>
                 <asp:GridView ID="grvCanceladas" class="table" runat="server" AutoGenerateColumns="false">   
                     <HeaderStyle HorizontalAlign="Center" />                 
                     <RowStyle HorizontalAlign="center"/>                              
@@ -201,7 +201,7 @@
                 </asp:GridView> 
             </div>
         </div>  
-        </div>
+        </asp:panel>
           <hr />    
          <div class="row panel-body" style="color:black">
 
