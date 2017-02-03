@@ -346,7 +346,7 @@ Partial Class wfrmRequisicionCompra
             Exit Sub
         End If
         Try
-            If txtAdicional.Text <> "" Then
+            If txtObservaciones.Text <> "" Then
 
                 If ViewState("DetRequi").Rows.Count > 0 Then 'Si existen articulos para la requisicion
                     Dim okCount As String = ""

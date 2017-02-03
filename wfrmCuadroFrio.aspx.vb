@@ -109,8 +109,8 @@ Partial Class wfrmCuadroFrio
                 For Each rowen As GridViewRow In grvDetalle.Rows
                     Dim dtsCotizaciones As New DataSet
                     strMensaje = clsFunciones.Llena_Grid(grvCotizaciones, "MIGRACION", dtsCotizaciones, "Cotizaciones" & detailIndex.ToString(), "Cargar_Cotizaciones",
-                             rowen.Cells(0).Text & "," & rowen.Cells(1).Text,
-                                "@intIdRequisicion,@intIdDetRequisicion")
+                             rowen.Cells(0).Text & "," & rowen.Cells(1).Text & ",2-3",
+                                "@intIdRequisicion,@intIdDetRequisicion,@vchIdEstatus")
                     If strMensaje = "OK" Then
                         Dim dummyTab As DataTable = dtsCotizaciones.Tables("Cotizaciones" & detailIndex.ToString())
                         dummyTab.Columns.Add("seleccionada")
@@ -171,7 +171,7 @@ Partial Class wfrmCuadroFrio
             'Se cargan las cotizaciones ya guardadas
 
             Dim dt As New DataTable()
-            dt.Columns.AddRange(New DataColumn(10) {New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("numeroproveedor"), New DataColumn("nombreproveedor"), New DataColumn("precio"), New DataColumn("requisicion"), New DataColumn("detallerequisicion"), New DataColumn("marca"), New DataColumn("tiempoentrega"), New DataColumn("seleccionada")})
+            dt.Columns.AddRange(New DataColumn(11) {New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("numeroproveedor"), New DataColumn("nombreproveedor"), New DataColumn("precio"), New DataColumn("requisicion"), New DataColumn("detallerequisicion"), New DataColumn("marca"), New DataColumn("tiempoentrega"), New DataColumn("intEstatus"), New DataColumn("seleccionada")})
 
 
             If Not ViewState("Cotizaciones" & index) Is Nothing Then

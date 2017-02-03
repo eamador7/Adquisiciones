@@ -8,7 +8,7 @@ Partial Class wfrmAprobarDetRequisicionesCompra
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
         'Usuario y perfil de prueba
         'Session("IdUsuario") = 4
-        'Session("idPerfil") = 24
+        'Session("idPerfil") = 22
         Session("caller") = "wfrmAprobarDetRequisicionesCompra.aspx"
 
         If Not Page.IsPostBack Then
@@ -19,7 +19,7 @@ Partial Class wfrmAprobarDetRequisicionesCompra
             Dim strMensaje As String
 
             Dim dt As New DataTable()
-            dt.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+            dt.Columns.AddRange(New DataColumn(14) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus"), New DataColumn("idEstatus")})
 
 
             Dim filterEstatus As String = ""
@@ -156,7 +156,7 @@ Partial Class wfrmAprobarDetRequisicionesCompra
     Protected Sub grvRequisiciones_rowCommand(sender As Object, e As GridViewCommandEventArgs) Handles grvRequisiciones.RowCommand
         If (e.CommandName = "Aprobar") Then
             Dim dtAprobadas As New DataTable()
-            dtAprobadas.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+            dtAprobadas.Columns.AddRange(New DataColumn(14) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus"), New DataColumn("idEstatus")})
 
             Dim index As Integer = Convert.ToInt32(e.CommandArgument)
             Dim dtRequis As New DataTable()
@@ -211,7 +211,7 @@ Partial Class wfrmAprobarDetRequisicionesCompra
     Protected Sub grvAprobadas_RowCommand(sender As Object, e As GridViewCommandEventArgs) Handles grvAprobadas.RowCommand
         If (e.CommandName = "Eliminar") Then
             Dim dtRequis As New DataTable()
-            dtRequis.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
+            dtRequis.Columns.AddRange(New DataColumn(14) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus"), New DataColumn("idEstatus")})
 
 
             Dim dtAprobadas As New DataTable()
@@ -317,7 +317,7 @@ Partial Class wfrmAprobarDetRequisicionesCompra
                     ' Si es una requisicion con contrato debe pasarse a comité ya cotizado
                     If ViewState("Detalle").Rows(rowen.RowIndex).Item(8) <> 0 Then
                         If filterEstatus = "2" Then
-                            estatusAdd = "4"
+                            estatusAdd = "5"
                         Else
                             estatusAdd = filterEstatus
                         End If
@@ -328,8 +328,8 @@ Partial Class wfrmAprobarDetRequisicionesCompra
                     listaCancelar &= If(listaCancelar = "", If(listaCancelar.Contains(rowen.Cells(0).Text), "", rowen.Cells(0).Text.ToString()), If(listaCancelar.Contains(rowen.Cells(0).Text), "", "|" & rowen.Cells(0).Text.ToString()))
 
                     strMensaje = clsFunciones.EjecutaProcedimiento("MIGRACION", "Actualiza_Estatus_RequisicionCompra",
-                           rowen.Cells(0).Text & "," & rowen.Cells(1).Text & "," & estatusAdd.Trim & "," & Session("IdUsuario") & ",Normal,0",
-                            "@intRequisicion,@intDetRequisicion,@intEstatus,@intIdUsuarioCaptura,@vchComentarios,@decPrecio")
+                           rowen.Cells(0).Text & "," & rowen.Cells(1).Text & "," & estatusAdd.Trim & "," & Session("IdUsuario") & ",Normal,0,0",
+                            "@intRequisicion,@intDetRequisicion,@intEstatus,@intIdUsuarioCaptura,@vchComentarios,@decPrecio,@intIdProveedor")
 
                     If strMensaje = "OK" Then
                         ' Se guarda cotizacion en caso de ser de contrato

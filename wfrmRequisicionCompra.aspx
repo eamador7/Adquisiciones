@@ -55,7 +55,7 @@
 		  <div class="row">                    
 				 <div class="form-group col-lg-9 col-md-9 col-sm-9">
 					<asp:label ID="Label1" runat="server">ESPECIFICACIONES TÉCNICAS:</asp:label>  
-					<asp:TextBox ID="txtObservaciones" TextMode="MultiLine" class="form-control" runat="server" ToolTip="Observaciones" placeholder="Observaciones"></asp:TextBox>                
+					<asp:TextBox ID="txtObservaciones" TextMode="MultiLine" class="form-control" runat="server" ToolTip="Especificaciones Técnicas" placeholder="Especificaciones técnicas (Obligatorias)"></asp:TextBox>                
 				</div>                
 			</div>  
 			

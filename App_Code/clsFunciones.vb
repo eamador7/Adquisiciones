@@ -210,7 +210,7 @@ Public Class clsFunciones
         End Try
     End Function
 
-    Public Function EnviarCorreo(ByVal Mensaje As String, ByVal EMail As String, Optional ByVal subject As String = "JMAS") As String
+    Public Shared Function EnviarCorreo(ByVal Mensaje As String, ByVal EMail As String, Optional ByVal subject As String = "JMAS") As String
         Try
             'MsgBox(EMail + vbNewLine + ArchivoXML)
             Dim _Message As New System.Net.Mail.MailMessage()

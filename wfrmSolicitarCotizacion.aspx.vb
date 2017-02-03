@@ -4,7 +4,8 @@ Partial Class wfrmSolicitarCotizacion
     Inherits System.Web.UI.Page
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
-
+        'Usuario prueba
+        Session("IdUsuario") = 4
         Session("caller") = "wfrmSolicitarCotizacion.aspx"
         If Not Page.IsPostBack Then
 
@@ -14,13 +15,13 @@ Partial Class wfrmSolicitarCotizacion
 
             Dim dt As New DataTable()
             dt.Columns.AddRange(New DataColumn(13) {New DataColumn("numrequisicion"), New DataColumn("indice"), New DataColumn("codigo"), New DataColumn("concepto"), New DataColumn("cantidad"), New DataColumn("precio"), New DataColumn("ccoid"), New DataColumn("ccoNumero"), New DataColumn("contrato"), New DataColumn("proveedor"), New DataColumn("solicitante"), New DataColumn("departamento"), New DataColumn("fecha"), New DataColumn("estatus")})
-
+            txtDias.Text = 3
 
 
 
             Dim dtsRequisiciones As New DataSet
             strMensaje = clsFunciones.Llena_Grid(grvRequisiciones, "MIGRACION", dtsRequisiciones, "Requisiciones", "Cargar_DetallesRequisicionCompra",
-                        ", , ,4,",
+                        ", , ,2,",
                         "@intIdRequisicion,@vchFechaDesde,@vchFechaHasta,@vchIdEstatus,@intIdSolicitante")
             If strMensaje = "OK" Then
 
@@ -282,9 +283,26 @@ Partial Class wfrmSolicitarCotizacion
 
                                 Alert("Error al guardar solicitudes", Me, 1, 4)
                             Else
-                                'Si tiene email
-                                If rowen.Item(2) <> "" Then
-                                    '   EnviarCorreo()
+
+                                If rowen.Item(6) <> "" Then
+                                    'Si tiene email
+
+                                    Dim contenido As String = ""
+                                    contenido = "Por este medio solicitamos la cotización de artículos y servicios. " & vbCrLf _
+                                  & "Favor de iniciar sessión en el portal de proveedores de JMAS o de acceder al siguiente enlace: " & vbCrLf
+                                    'id = idCotizacion key = idProveedor
+                                    Dim llave As String = "Jmas"
+                                    Dim llaveCifrada As New clsCifrado(llave)
+                                    Dim aCifrarId = dtsCotiza.Tables("Cotizacion").Rows(0).Item(0).ToString
+                                    Dim aCifrarKey = rowen.Item(0)
+                                    Dim param1 As String = "?id=" & llaveCifrada.EncryptData(aCifrarId)
+                                    Dim param2 As String = "&key=" & llaveCifrada.EncryptData(aCifrarKey)
+                                    '       Dim decrypted As String = llaveCifrada.DecryptData(param1.Substring(4))
+                                    Dim enlace As String = ("http://201.147.15.182/Compras/wfrmCapturarCotizacion.aspx" & param1 & param2).Replace("+", "%2B")
+
+                                    contenido &= enlace
+
+                                    Dim mensaje As String = EnviarCorreo(contenido, rowen.Item(6).ToString.Trim, "Solicitud de cotización")
                                 End If
                                 okCount &= If(okCount = "", dtsCotiza.Tables("Cotizacion").Rows(0).Item(0).ToString, " - " & dtsCotiza.Tables("Cotizacion").Rows(0).Item(0).ToString)
                             End If

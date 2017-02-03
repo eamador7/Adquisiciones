@@ -106,7 +106,7 @@
                                 <HeaderStyle HorizontalAlign="Center" />                 
                                 <RowStyle HorizontalAlign="center"/>                              
                                 <Columns>    
-                                    <asp:BoundField DataField="indice" HeaderText="INDICE" Visible="false"/>   
+                                    <asp:BoundField DataField="indice" HeaderText="INDICE" Visible="true"/>   
                                     <asp:BoundField DataField="codigo" HeaderText="CODIGO" Visible="False"/>   
                                     <asp:BoundField DataField="concepto" HeaderText="CONCEPTO" Visible="False"/>                                                         
                                     <asp:BoundField DataField="numeroproveedor" ReadOnly="True" HeaderText="NO. PROVEEDOR"/>
@@ -116,7 +116,7 @@
                                     <asp:BoundField DataField="tiempoEntrega" ReadOnly="True" HeaderText="TIEMPO DE ENTREGA" Visible="true"/>
                                     <asp:BoundField DataField="requisicion" HeaderText="CCO_NUMERO" Visible="false"/>
                                     <asp:BoundField DataField="detallerequisicion" HeaderText="CONTRATO" Visible="false"/>
-                                    <asp:TemplateField>
+                                    <asp:TemplateField Visible="false">
                                         <ItemTemplate>
                                             <asp:LinkButton Text="Editar" runat="server" CommandName="Edit" />
                                         </ItemTemplate>
@@ -128,7 +128,9 @@
                                     <asp:TemplateField>
                                         <ItemTemplate>                          
                                         <asp:ImageButton ID="SelCotiButton" runat="server" ImageUrl="imagenes/der_up.png"
-                                            CommandName="Seleccionar" CommandArgument="<%# CType(Container, GridViewRow).RowIndex %>" />                        
+                                            CommandName="Seleccionar" CommandArgument="<%# CType(Container, GridViewRow).RowIndex %>" />    
+                                        <asp:ImageButton ID="EditarCotizacionButton" runat="server" ImageUrl="imagenes/edit.png"
+                                            CommandName="Seleccionar" CommandArgument="<%# CType(Container, GridViewRow).RowIndex %>" />                       
                                         </ItemTemplate> 
                                     </asp:TemplateField>
                     

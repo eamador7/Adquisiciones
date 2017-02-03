@@ -175,7 +175,7 @@
           <hr />   --%> 
          <div class="row panel-body" style="color:black">
             <div class="form-group col-lg-6 col-md-6 col-sm-6">
-                 <asp:TextBox ID="txtObservaciones" ReadOnly="false" TextMode="MultiLine" class="form-control" runat="server" ToolTip="Observaciones" placeholder="Observaciones"></asp:TextBox>                                        
+                <%-- <asp:TextBox ID="txtObservaciones" ReadOnly="false" TextMode="MultiLine" class="form-control" runat="server" ToolTip="Observaciones" placeholder="Observaciones"></asp:TextBox>                                        --%>
             </div>
                 <div class="form-group col-lg-2 col-md-2 col-sm-5">
                         

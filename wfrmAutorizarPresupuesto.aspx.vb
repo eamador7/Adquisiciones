@@ -8,9 +8,9 @@ Partial Class wfrmAutorizarPresupuesto
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
         'Usuario y perfil de prueba
-        Session("IdUsuario") = 4
-        'Session("idPerfil") = 24
-        Session("departamento") = 506
+        'Session("IdUsuario") = 4
+        ''Session("idPerfil") = 24
+        'Session("departamento") = 506
         Session("caller") = "wfrmAutorizarPresupuesto.aspx"
 
         If Not Page.IsPostBack Then
