@@ -6,8 +6,8 @@ Partial Class wfrmCuadroFrio
     Inherits System.Web.UI.Page
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
-
-
+        ' Usuario prueba
+        'Session("IdUsuario") = 4
         If Not Page.IsPostBack Then
 
             Dim clsFunciones As New clsFunciones
@@ -138,8 +138,10 @@ Partial Class wfrmCuadroFrio
                         theRow.item(10) = 0 'Se marcan todos para que no estén seleccionados
                         indice += 1
                     Next
-                    ViewState("Cotizaciones" & currentIndex).Rows(indiceMenor).item(10) = 1 'Se marca el menor como seleccionado
-                    ViewState("Selected").rows(0).item(4) += (menor * ViewState("Detalle").Rows(currentIndex).item(4))
+                    If ViewState("Cotizaciones" & currentIndex).Rows.count > 0 Then
+                        ViewState("Cotizaciones" & currentIndex).Rows(indiceMenor).item(10) = 1 'Se marca el menor como seleccionado
+                        ViewState("Selected").rows(0).item(4) += (menor * ViewState("Detalle").Rows(currentIndex).item(4))
+                    End If
                 Next
 
                 dtSelected = ViewState("Selected")
@@ -239,6 +241,24 @@ Partial Class wfrmCuadroFrio
             grvSelected.DataSource = dtselected
             grvSelected.DataBind()
             grvSelected.Rows(0).BackColor = Drawing.Color.LightBlue
+        ElseIf (e.CommandName = "Editar") Then
+            Dim index As Integer = Convert.ToInt32(e.CommandArgument)
+            Dim rowen = ViewState("Cotizaciones" & hdnCotizacionIndex.Value.ToString()).Rows(index)
+            Dim strMensaje As String = ""
+            Dim clsFunciones As New clsFunciones
+            'Se actualiza el estatus del detalle de la requisicion
+            strMensaje = clsFunciones.EjecutaProcedimiento("MIGRACION", "Actualiza_Estatus_Cotizacion",
+             rowen.item(6) & "," & rowen.item(7) & "," & rowen.item(0) & ",4," & Session("IdUsuario"),
+               "@intRequisicion,@intDetRequisicion,@intIdCotizacion,@intEstatus,@intIdUsuarioCaptura")
+
+            If strMensaje = "OK" Then
+                btnGuardar.Enabled = False
+                Alert("Se ha solicitado al proveedor actualizar la cotización, se refrescará la pagina para recalcular los valores.", Me, 1, 3)
+                Timer1.Enabled = True
+            Else
+                Alert("Error al guardar cambios " & strMensaje, Me, 1, 4)
+                Exit Sub
+            End If
         End If
     End Sub
 
@@ -255,38 +275,53 @@ Partial Class wfrmCuadroFrio
 
 
         Try
-            Dim index As Integer = 0
-            'Recorre el detalle para actualizar el estatus
-            For Each rowen In ViewState("Detalle").Rows
-                'Busca el precio seleccionado
-                For Each priceRow In ViewState("Cotizaciones" & index).Rows
-                    If priceRow.item(10) = 1 Then
-                        hdnPrecio.Value = priceRow.item(5)
-                        hdnProveedor.Value = priceRow.item(3)
-                    End If
-                Next
-
-                hdnIdRequisicionSel.Value = rowen.item(0)
-                hdnDetallerequisicion.Value = rowen.item(1)
-                'Usuario de prueba
-                Session("IdUsuario") = 4
-                Dim precioInsert As Decimal = 0
-                precioInsert = hdnPrecio.Value
-                'Se actualiza el estatus del detalle de la requisicion
-                strMensaje = clsFunciones.EjecutaProcedimiento("MIGRACION", "Actualiza_Estatus_RequisicionCompra",
-                 hdnIdRequisicionSel.Value & "," & hdnDetallerequisicion.Value & "," & If(cbComite.Checked, 4, 5).ToString() & "," & Session("IdUsuario") & ",Normal," & precioInsert.ToString("###,###,##0.00") & "," & hdnProveedor.Value,
-                   "@intRequisicion,@intDetRequisicion,@intEstatus,@intIdUsuarioCaptura,@vchComentarios,@decPrecio,@intIdProveedor")
-
-                If strMensaje = "OK" Then
-
+            Dim permitir As Boolean = False
+            'Determinar si se puede avanzar
+            For indice As Integer = 0 To ViewState("Detalle").Rows.count - 1
+                If ViewState("Cotizaciones" & indice).Rows.count > 0 Then
+                    permitir = True
                 Else
-                    Alert("Error al guardar cambios " & strMensaje, Me, 1, 4)
-                    Exit Sub
+                    permitir = False
                 End If
-                index += 1
             Next
-            Alert("Se han guardado los cambios correctamente ", Me, 1, 5)
-            Timer1.Enabled = True
+            'Si hay cotizaciones seleccionadas para todos los elementos de la requisicion
+            If permitir Then
+
+                Dim index As Integer = 0
+                'Recorre el detalle para actualizar el estatus
+                For Each rowen In ViewState("Detalle").Rows
+                    'Busca el precio seleccionado
+                    For Each priceRow In ViewState("Cotizaciones" & index).Rows
+                        If priceRow.item(10) = 1 Then
+                            hdnPrecio.Value = priceRow.item(5)
+                            hdnProveedor.Value = priceRow.item(3)
+                        End If
+                    Next
+
+                    hdnIdRequisicionSel.Value = rowen.item(0)
+                    hdnDetallerequisicion.Value = rowen.item(1)
+                    'Usuario de prueba
+                    Session("IdUsuario") = 4
+                    Dim precioInsert As Decimal = 0
+                    precioInsert = hdnPrecio.Value
+                    'Se actualiza el estatus del detalle de la requisicion
+                    strMensaje = clsFunciones.EjecutaProcedimiento("MIGRACION", "Actualiza_Estatus_RequisicionCompra",
+                     hdnIdRequisicionSel.Value & "," & hdnDetallerequisicion.Value & "," & If(cbComite.Checked, 4, 5).ToString() & "," & Session("IdUsuario") & ",Normal," & precioInsert.ToString("###,###,##0.00") & "," & hdnProveedor.Value,
+                       "@intRequisicion,@intDetRequisicion,@intEstatus,@intIdUsuarioCaptura,@vchComentarios,@decPrecio,@intIdProveedor")
+
+                    If strMensaje = "OK" Then
+
+                    Else
+                        Alert("Error al guardar cambios " & strMensaje, Me, 1, 4)
+                        Exit Sub
+                    End If
+                    index += 1
+                Next
+                Alert("Se han guardado los cambios correctamente ", Me, 1, 5)
+                Timer1.Enabled = True
+            Else
+                Alert("Debe seleccionarse un precio para cada elemento de la requisicion.", Me, 1, 3)
+            End If
         Catch ex As Exception
             Alert("Error al guardar cambios: " & ex.Message & ": ", Me, 1, 4)
         End Try

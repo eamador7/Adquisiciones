@@ -210,7 +210,7 @@ Public Class clsFunciones
         End Try
     End Function
 
-    Public Shared Function EnviarCorreo(ByVal Mensaje As String, ByVal EMail As String, Optional ByVal subject As String = "JMAS") As String
+    Public Shared Function EnviarCorreo(ByVal Mensaje As String, ByVal EMail As String, Optional ByVal subject As String = "JMAS", Optional ByVal isHtml As Boolean = False) As String
         Try
             'MsgBox(EMail + vbNewLine + ArchivoXML)
             Dim _Message As New System.Net.Mail.MailMessage()
@@ -239,7 +239,7 @@ Public Class clsFunciones
             'contenido del mail 
             _Message.BodyEncoding = System.Text.Encoding.UTF8
             _Message.Priority = System.Net.Mail.MailPriority.High
-            _Message.IsBodyHtml = False
+            _Message.IsBodyHtml = isHtml
             'ADICION DE DATOS ADJUNTOS 
             ''Dim _File As String = My.Application.Info.DirectoryPath & Archivo
             'Dim _FileXML As String = ArchivoXML

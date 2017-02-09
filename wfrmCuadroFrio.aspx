@@ -127,10 +127,10 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField>
                                         <ItemTemplate>                          
-                                        <asp:ImageButton ID="SelCotiButton" runat="server" ImageUrl="imagenes/der_up.png"
+                                        <asp:ImageButton ID="SelCotiButton" runat="server" Height="15" ImageUrl="imagenes/der_up.png"
                                             CommandName="Seleccionar" CommandArgument="<%# CType(Container, GridViewRow).RowIndex %>" />    
-                                        <asp:ImageButton ID="EditarCotizacionButton" runat="server" ImageUrl="imagenes/edit.png"
-                                            CommandName="Seleccionar" CommandArgument="<%# CType(Container, GridViewRow).RowIndex %>" />                       
+                                        <asp:ImageButton ID="EditarCotizacionButton" Height="15" runat="server" ImageUrl="imagenes/edit.png"
+                                            CommandName="Editar" CommandArgument="<%# CType(Container, GridViewRow).RowIndex %>" />                       
                                         </ItemTemplate> 
                                     </asp:TemplateField>
                     

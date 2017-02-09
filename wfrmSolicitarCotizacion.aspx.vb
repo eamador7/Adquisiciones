@@ -288,8 +288,8 @@ Partial Class wfrmSolicitarCotizacion
                                     'Si tiene email
 
                                     Dim contenido As String = ""
-                                    contenido = "Por este medio solicitamos la cotización de artículos y servicios. " & vbCrLf _
-                                  & "Favor de iniciar sessión en el portal de proveedores de JMAS o de acceder al siguiente enlace: " & vbCrLf
+                                    '  contenido = "Por este medio solicitamos la cotización de artículos y servicios. " & vbCrLf _
+                                    '& "Favor de iniciar sessión en el portal de proveedores de JMAS o de acceder al siguiente enlace: " & vbCrLf
                                     'id = idCotizacion key = idProveedor
                                     Dim llave As String = "Jmas"
                                     Dim llaveCifrada As New clsCifrado(llave)
@@ -300,9 +300,131 @@ Partial Class wfrmSolicitarCotizacion
                                     '       Dim decrypted As String = llaveCifrada.DecryptData(param1.Substring(4))
                                     Dim enlace As String = ("http://201.147.15.182/Compras/wfrmCapturarCotizacion.aspx" & param1 & param2).Replace("+", "%2B")
 
-                                    contenido &= enlace
 
-                                    Dim mensaje As String = EnviarCorreo(contenido, rowen.Item(6).ToString.Trim, "Solicitud de cotización")
+
+                                    contenido = "<table align='center' border='0' cellspacing='0' cellpadding='0' width='100%' bgcolor='#EDF0F3' style='background-color:#edf0f3;table-layout:fixed'>" &
+                                                       "     <tbody>" &
+                                                       "         <tr>" &
+                                                       "             <td align='center'>" &
+                                                       "                 <center style='width:100%'>" &
+                                                       "                     <table border='0' cellspacing='0' cellpadding='0' width='600' bgcolor='#FFFFFF' style='background-color:#ffffff;margin:0 auto;max-width:600px;width:inherit'>" &
+                                                       "                         <tbody>" &
+                                                       "                             <tr>" &
+                                                       "                                 <td>" &
+                                                       "                                     <table border='0' cellspacing='0' cellpadding='0' width='100%' style='width:100%!important;min-width:100%!important'>" &
+                                                       "                                         <tbody>" &
+                                                       "                                             <tr>" &
+                                                       "                                                 <td align='left' valign='middle'>" &
+                                                       "                                                     <a href='http://www.jmaschih.gob.mx/principal/#homePage' style='color:#008cc9;white-space:normal;display:inline-block;text-decoration:none' target='_blank'> " &
+                                                       "                                                        <img alt='Junta Municipal de Agua y Saneamiento' border='0' src='http://www.jmaschih.gob.mx/principal/wp-content/jmascompletesmall.png'  style='outline:none;color:#ffffff;text-decoration:none;display:block'>" &
+                                                       "                                                     </a>" &
+                                                       "                                                 </td>" &
+                                                       "                                                 <td valign='middle' width='100%' align='center' style='padding:0 0 0 10px'>" &
+                                                       "                                                     <span style='word-wrap:break-word;color:#4c4c4c;word-break:break-word;font-weight:400;font-size:18px;line-height:1.429'><strong>Solicitud de Cotización</strong></span>                                                    " &
+                                                       "                                                 </td>                                                " &
+                                                       "                                             </tr>" &
+                                                       "                                         </tbody>" &
+                                                       "                                     </table>" &
+                                                       "                                 </td>" &
+                                                       "                             </tr>" &
+                                                       "                             <tr>" &
+                                                       "                                 <td bgcolor='#F6F8FA' style='background-color:#f6f8fa;padding:12px;border-bottom:1px solid #ececec'>" &
+                                                       "                                     <table border='0' cellspacing='0' cellpadding='0' width='100%'>" &
+                                                       "                                         <tbody>" &
+                                                       "                                             <tr>" &
+                                                       "                                                 <td>" &
+                                                       "                                                     <h4 style='padding:24px 48px 24px 24px;margin:0;color:#4c4c4c;font-weight:200'>" &
+                                                       "                                                         <p>Estimado Usuario:</p>" &
+                                                       "                                                         <p>Como parte de los servicios a los usuarios que se encuentran registrados en nuestro portal de proveedores, la <strong>Junta Municipal de Agua y Saneamiento de Chihuahua</strong> le informa que se generó una nueva <strong>Solicitud de Cotización</strong> y se encuentra disponible para su captura.</p>" &
+                                                       "                                                     </h4>" &
+                                                       "                                                 </td>" &
+                                                       "                                             </tr>         " &
+                                                       "                                             <tr>" &
+                                                       "                                                 <td>" &
+                                                       "                                                     <table border='0' cellspacing='0' cellpadding='0' style='background-color:#f6f8fa;padding:12px 24px;font-family:Helvetica,Arial,sans-serif' width='100%' bgcolor='#F6F8FA'>" &
+                                                       "                                                         <tbody>" &
+                                                       "                                                             <tr>" &
+                                                       "                                                                 <td style='color:#86898c;font-size:12px'>" &
+                                                       "                                                                     <table border='0' cellspacing='0' cellpadding='0' width='100%'>" &
+                                                       "                                                                         <tbody>" &
+                                                       "                                                                             <tr>" &
+                                                       "                                                                                 <td style='padding:2px 0'>" &
+                                                       "                                                                                     <p><b>No. Proveedor:</b> <a href='" & enlace & "'>" & rowen.Item(0) & "</a></p>" &
+                                                       "                                                                                     <p><b>Nombre:</b> " & rowen.Item(1) & "</p>" &
+                                                       "                                                                                     <p><b>RFC:</b> " & rowen.Item(4) & "</p>" &
+                                                       "                                                                                     <p><b>Fecha Emisión:</b> " & CStr(Today) & "</p>" &
+                                                       "                                                                                     <h4 style='padding:24px 48px 24px 24px;margin:0;color:#4c4c4c;font-weight:200'>" &
+                                                       "                                                                                         <p>Si al dar click en el numero de proveedor no es redireccionado a su pantalla de captura de cotizaciones, copie y pegue en su explorador el siguiente enlace: </p>" &
+                                                       "                                                                                         <p>" & enlace & "</p><p>También puede acceder a su portal de usuario para capturar todas sus cotizaciones pendientes.</p></h4>" &
+                                                       "                                                                                 </td>" &
+                                                       "                                                                             </tr>                                                                            " &
+                                                       "                                                                         </tbody>" &
+                                                       "                                                                     </table>" &
+                                                       "                                                                 </td>" &
+                                                       "                                                             </tr>" &
+                                                       "                                                         </tbody>" &
+                                                       "                                                     </table>" &
+                                                       "                                                 </td>" &
+                                                       "                                             </tr>" &
+                                                       "                                         </tbody>" &
+                                                       "                                     </table>" &
+                                                       "                                 </td>" &
+                                                       "                             </tr>" &
+                                                       "                             <tr>" &
+                                                       "                                 <td>" &
+                                                       "                                 </td>" &
+                                                       "                             </tr>" &
+                                                       "                             <tr>" &
+                                                       "                                 <td>" &
+                                                       "                                     <table border='0' cellspacing='0' cellpadding='0' width='100%' bgcolor='#EDF0F3' align='center' style='background-color:#edf0f3;padding:0 24px;color:#999999;text-align:center'>" &
+                                                       "                                         <tbody>" &
+                                                       "                                             <tr>" &
+                                                       "                                                 <td align='center' style='padding:16px 0 0 0;text-align:center'>" &
+                                                       "                                                     <table align='center' border='0' cellspacing='0' cellpadding='0' width='100%'>" &
+                                                       "                                                         <tbody>" &
+                                                       "                                                             <tr>" &
+                                                       "                                                                 <td valign='middle' align='center' style='padding:0 0 16px 0;vertical-align:middle;text-align:center'>" &
+                                                       "                                                                 </td>" &
+                                                       "                                                             </tr>" &
+                                                       "                                                         </tbody>" &
+                                                       "                                                     </table>" &
+                                                       "                                                 </td>" &
+                                                       "                                             </tr>" &
+                                                       "                                             <tr>" &
+                                                       "                                                 <td>" &
+                                                       "                                                     <table border='0' cellspacing='0' cellpadding='0' width='100%'>" &
+                                                       "                                                         <tbody>" &
+                                                       "                                                             <tr>" &
+                                                       "                                                                 <td align='center' style='padding:0 0 8px 0;text-align:center'>" &
+                                                       "                                                                     <a href='http://www.jmaschih.gob.mx/principal/#homePage' style='color:#008cc9;white-space:normal;display:inline-block;text-decoration:none' target='_blank'> <img alt='JMAS Chihuahua' border='0' src='http://www.jmaschih.gob.mx/principal/wp-content/jmascompletesmall.png' width='40' style='outline:none;color:#ffffff;text-decoration:none;display:block'>" &
+                                                       "                                                                     </a>" &
+                                                       "                                                                 </td>" &
+                                                       "                                                             </tr>" &
+                                                       "                                                             <tr>" &
+                                                       "                                                                 <td align='center' style='padding:0 0 12px 0;text-align:center'>" &
+                                                       "                                                                     <span dir='ltr'> " &
+                                                       "                                                                         <p style='padding:0;margin:0;color:#737373;font-weight:400;font-size:12px;line-height:1.333'>" &
+                                                       "                                                                         ©" & Today.Year.ToString() & " JMAS Chihuahua - Junta Municipal de Agua y Saneamiento de Chihuahua</p></span>" &
+                                                       "                                                                 </td>" &
+                                                       "                                                             </tr>" &
+                                                       "                                                         </tbody>" &
+                                                       "                                                     </table>" &
+                                                       "                                                 </td>" &
+                                                       "                                             </tr>" &
+                                                       "                                         </tbody>" &
+                                                       "                                     </table>" &
+                                                       "                                 </td>" &
+                                                       "                             </tr>" &
+                                                       "                         </tbody>" &
+                                                       "                     </table>" &
+                                                       "                 </center>" &
+                                                       "             </td>" &
+                                                       "         </tr>" &
+                                                       "     </tbody>" &
+                                                       " </table>"
+
+
+                                    Dim mensaje As String = EnviarCorreo(contenido, rowen.Item(6).ToString.Trim, "Solicitud de cotización", True)
                                 End If
                                 okCount &= If(okCount = "", dtsCotiza.Tables("Cotizacion").Rows(0).Item(0).ToString, " - " & dtsCotiza.Tables("Cotizacion").Rows(0).Item(0).ToString)
                             End If
@@ -313,7 +435,7 @@ Partial Class wfrmSolicitarCotizacion
 
 
                         If okCount <> "" Then
-                            Alert("Se han generado las siguientes solicitudes correctamente: " & okCount & "", Me, 1, 4)
+                            Alert("Se han generado las siguientes solicitudes correctamente: " & okCount & "", Me, 1, 2)
                         Else
                             Alert("Error al guardar solicitudes", Me, 1, 4)
                         End If
